@@ -1,1 +1,3 @@
 *.swp
+
+client/node_modules/*
