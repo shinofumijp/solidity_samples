@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-class WithdrawForm extends Component {
+class CloseForm extends Component {
   constructor(props) {
     super(props);
   }
@@ -14,11 +14,11 @@ class WithdrawForm extends Component {
     return(
       <div>
         <form onSubmit={this.onSubmitHandler}>
-          <input type="submit" value="withdraw" />
+          <input type="submit" value="Close" />
         </form>
       </div>
     );
   }
 }
 
-export default WithdrawForm;
+export default CloseForm;

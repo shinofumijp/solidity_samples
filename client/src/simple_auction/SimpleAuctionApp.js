@@ -4,6 +4,7 @@ import getWeb3 from "../utils/getWeb3";
 import Contract from "../contracts/SimpleAuction"
 import Form from "./Form"
 import WithdrawForm from "./WithdrawForm"
+import CloseForm from "./CloseForm"
 
 class SimpleAuctionApp extends Component {
 
@@ -38,7 +39,7 @@ class SimpleAuctionApp extends Component {
     const highestBid = await auction_contract.methods.highestBid().call();
     const highestBidder = await auction_contract.methods.highestBidder().call();
     const beneficiary = await auction_contract.methods.beneficiary().call();
-    const auctionEndTime = await auction_contract.methods.auctionEndTime().call();
+    const auctionEndTime = await parseInt(auction_contract.methods.auctionEndTime().call());
 
     this.setState({ highestBid, highestBidder, beneficiary, auctionEndTime });
   }
@@ -51,7 +52,7 @@ class SimpleAuctionApp extends Component {
 
   auctionEnd = () => {
     try {
-      if (Date.now >= auctionEndTime) {
+      if (this.auctionEnded()) {
         auction_contract.methods.auctionEnd().send({ from: accounts[0] });
       }
     } catch (error) {
@@ -85,7 +86,7 @@ class SimpleAuctionApp extends Component {
         <h2>SimpleAuctionApp</h2>
         <p>HighestBidder: {this.state.highestBidder}</p>
         <p>HighestBid: {this.state.highestBid}</p>
-        {!this.auctionEnded() ? <Form onSubmitHandler={this.bid} /> : <p>Auction ended</p>}
+        {!this.auctionEnded() ? <Form onSubmitHandler={this.bid} /> : <CloseForm  onSubmitHandler={this.actionEnded}/>}
         <WithdrawForm onSubmitHandler={this.withdraw}/>
       </div>
     );
