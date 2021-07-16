@@ -99,7 +99,7 @@ class PaymentChannelApp extends Component {
     }
     return (
       <div className="App">
-        <label>Simple Payment Channel App</label>
+        <h2>Simple Payment Channel App</h2>
         <Form handleSubmit={this.signPayment} />
         <CloseForm handleClose={this.handleClose} isValidSignature={this.isValidSignature}/>
       </div>
