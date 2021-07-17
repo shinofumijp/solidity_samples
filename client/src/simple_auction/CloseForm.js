@@ -6,7 +6,7 @@ class CloseForm extends Component {
   }
 
   onSubmitHandler = (event) => {
-    event.preventDefault;
+    event.preventDefault();
     this.props.onSubmitHandler();
   }
 

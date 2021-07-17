@@ -26,7 +26,7 @@ class PaymentChannelApp extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
-      this.setState({ web3, accounts, payment_channel_contract: instance }, this.runApp);
+      this.setState({ web3, accounts, contract: instance }, this.runApp);
     } catch (error) {
       alert(
         `Failed`,
@@ -36,9 +36,9 @@ class PaymentChannelApp extends Component {
   }
 
   runApp = async () => {
-    const { accounts, payment_channel_contract } = this.state;
+    const { accounts, contract } = this.state;
 
-    const response = await payment_channel_contract.methods.sender().call();
+    const response = await contract.methods.sender().call();
 
     this.setState({ sender: response });
   }
@@ -87,9 +87,9 @@ class PaymentChannelApp extends Component {
   }
 
   handleClose = async (amount, signature) => {
-    const { accounts, payment_channel_contract } = this.state;
+    const { accounts, contract } = this.state;
 
-    const response = await payment_channel_contract.methods.close(amount, signature).call();
+    const response = await contract.methods.close(amount, signature).call();
   }
 
   render() {
