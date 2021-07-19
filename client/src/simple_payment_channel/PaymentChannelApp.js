@@ -93,10 +93,6 @@ class PaymentChannelApp extends Component {
   }
 
   render() {
-    const { web3 } = this.state;
-    if (!web3) {
-      return <div>Loading Web3, accounts, and contract... </div>;
-    }
     return (
       <div className="App">
         <h2>Simple Payment Channel App</h2>
