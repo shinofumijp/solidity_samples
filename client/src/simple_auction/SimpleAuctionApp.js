@@ -23,7 +23,7 @@ class SimpleAuctionApp extends Component {
         Contract.abi,
         deployedNetwork && deployedNetwork.address
       );
-      this.setState({ web3, accounts, auction_contract: instance }, this.runApp);
+      this.setState({ web3, accounts, contract: instance }, this.runApp);
     }
     catch (error) {
       alert(
@@ -34,26 +34,27 @@ class SimpleAuctionApp extends Component {
   }
 
   runApp = async () => {
-    const { accounts, auction_contract } = this.state;
+    const { accounts, contract } = this.state;
 
-    const highestBid = await auction_contract.methods.highestBid().call();
-    const highestBidder = await auction_contract.methods.highestBidder().call();
-    const beneficiary = await auction_contract.methods.beneficiary().call();
-    const auctionEndTime = await parseInt(auction_contract.methods.auctionEndTime().call());
+    const highestBid = await contract.methods.highestBid().call();
+    const highestBidder = await contract.methods.highestBidder().call();
+    const beneficiary = await contract.methods.beneficiary().call();
+    const auctionEndTime = await parseInt(contract.methods.auctionEndTime().call());
 
     this.setState({ highestBid, highestBidder, beneficiary, auctionEndTime });
   }
 
   bid = async (value) => {
-    const { accounts, auction_contract } = this.state;
+    const { accounts, contract } = this.state;
 
-    const response = await auction_contract.methods.bid().send({ from: accounts[0], value: value });
+    const response = await contract.methods.bid().send({ from: accounts[0], value: value });
   }
 
   auctionEnd = () => {
+    const { accounts, contract } = this.state;
     try {
-      if (this.auctionEnded()) {
-        auction_contract.methods.auctionEnd().send({ from: accounts[0] });
+      if (this.isAuctionEnded()) {
+        contract.methods.auctionEnd().send({ from: accounts[0] });
       }
     } catch (error) {
       console.log("auction has ended");
@@ -61,32 +62,27 @@ class SimpleAuctionApp extends Component {
     }
   }
 
-  auctionEnded = () => {
-    if (this.state.auctionEndTime == null) {
-      return false;
+  isAuctionEnded = () => {
+    if (!this.state.auctionEndTime) {
+      return true;
     }
 
     return this.state.auctionEndTime <= Date.now;
   }
 
   withdraw = async () => {
-    const { accounts, auction_contract } = this.state;
+    const { accounts, contract } = this.state;
 
-    const response = await auction_contract.methods.withdraw().send({ from: accounts[0] });
+    const response = await contract.methods.withdraw().send({ from: accounts[0] });
   }
 
   render() {
-    const { web3 } = this.state;
-    if (!web3) {
-      return <div>Loading Web3, accounts, and contract... </div>;
-    }
-
     return(
       <div>
         <h2>SimpleAuctionApp</h2>
         <p>HighestBidder: {this.state.highestBidder}</p>
         <p>HighestBid: {this.state.highestBid}</p>
-        {!this.auctionEnded() ? <Form onSubmitHandler={this.bid} /> : <CloseForm  onSubmitHandler={this.actionEnded}/>}
+        {!this.isAuctionEnded() ? <Form onSubmitHandler={this.bid} /> : <CloseForm  onSubmitHandler={this.auctionEnd}/>}
         <WithdrawForm onSubmitHandler={this.withdraw}/>
       </div>
     );
